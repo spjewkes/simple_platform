@@ -56,10 +56,10 @@ public:
 				else
 					player_vx += 0.25f;
 			}
-			else
-			{
-				player_vx = 0.0f;
-			}
+			/* else */
+			/* { */
+			/* 	player_vx = 0.0f; */
+			/* } */
 
 			if (GetKey(Keys::SPACE).bHeld && on_ground)
 			{
@@ -69,6 +69,14 @@ public:
 
 			// Apply gravity to player's vertical velocity
 			player_vy += 60.0f * elapsed_time;
+
+			// Add drag
+			if (player_vx > 0.0f)
+				player_vx -= 35.0f * elapsed_time;
+			if (player_vx < 0.0f)
+				player_vx += 35.0f * elapsed_time;
+			if (fabs(player_vx) < 0.1f)
+				player_vx = 0.0f;
 
 			// Clamp velocities
 			if (player_vx < -10.0f)
