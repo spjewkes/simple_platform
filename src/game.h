@@ -63,34 +63,46 @@ public:
 			// Check for collisions
 			float new_player_x = player_x + player_vx * elapsed_time;
 			float new_player_y = player_y + player_vy * elapsed_time;
-			char c0 = level[static_cast<int>(floor(new_player_y + 0.01f) * level_width + floor(new_player_x + 0.01f))];
-			char c1 = level[static_cast<int>(floor(new_player_y + 0.01f) * level_width + floor(new_player_x + 0.99f))];
-			char c2 = level[static_cast<int>(floor(new_player_y + 0.99f) * level_width + floor(new_player_x + 0.01f))];
-			char c3 = level[static_cast<int>(floor(new_player_y + 0.99f) * level_width + floor(new_player_x + 0.99f))];
 
-			if (player_vx < 0.0f && (c0 != '.' || c2 != '.'))
+			// Moving Left
+			if (player_vx < 0.0f &&
+				((GetTile(new_player_x + 0.01f, new_player_y + 0.01f) != '.') ||
+				 (GetTile(new_player_x + 0.01f, new_player_y + 0.99f) != '.')))
 			{
+				new_player_x = player_x;
 				player_vx = 0.0f;
 			}
 
-			if (player_vx > 0.0f && (c1 != '.' || c3 != '.'))
+			// Moving Right
+			if (player_vx > 0.0f &&
+				((GetTile(new_player_x + 0.99f, new_player_y + 0.01f) != '.') ||
+				 (GetTile(new_player_x + 0.99f, new_player_y + 0.99f) != '.')))
 			{
+				new_player_x = player_x;
 				player_vx = 0.0f;
 			}
 
-			if (player_vy < 0.0f && (c0 != '.' || c1 != '.'))
+			// Moving Up
+			if (player_vy < 0.0f &&
+				((GetTile(new_player_x + 0.01f, new_player_y + 0.01f) != '.') ||
+				 (GetTile(new_player_x + 0.99f, new_player_y + 0.01f) != '.')))
 			{
+				new_player_y = player_y;
 				player_vy = 0.0f;
 			}
 
-			if (player_vy > 0.0f && (c2 != '.' || c3 != '.'))
+			// Moving Down
+			if (player_vy > 0.0f &&
+				((GetTile(new_player_x + 0.01f, new_player_y + 0.99f) != '.') ||
+				 (GetTile(new_player_x + 0.99f, new_player_y + 0.99f) != '.')))
 			{
+				new_player_y = player_y;
 				player_vy = 0.0f;
 			}
 
 			// Update player and camera
-			player_x += player_vx * elapsed_time;
-			player_y += player_vy * elapsed_time;
+			player_x = new_player_x;
+			player_y = new_player_y;
 
 			camera_x = player_x;
 			camera_y = player_y;
@@ -135,8 +147,8 @@ public:
 			player->Draw((player_x - origin_x) * mag * tile, (player_y - origin_y) * mag * tile, mag);
 
 			// Apply gravity to player's vertical velocity
-			c0 = level[static_cast<int>(floor(player_y + 1.01f) * level_width + floor(player_x + 0.01f))];
-			c1 = level[static_cast<int>(floor(player_y + 1.01f) * level_width + floor(player_x + 0.99f))];
+			char c0 = GetTile(player_y + 1.01f, player_x + 0.01f);
+			char c1 = GetTile(player_y + 1.01f, player_x + 0.99f);
 			if (player_vy != 0.0f || (c0 == '.' && c1 == '.'))
 			{
 				player_vy += 20.0f * elapsed_time;
@@ -153,6 +165,11 @@ public:
 	}
 
 private:
+	char GetTile(float x, float y)
+	{
+		return level[static_cast<int>(floor(y) * level_width + floor(x))];
+	}
+
 	std::string level;
 	Sprite *player;
 	Sprite *wall;
