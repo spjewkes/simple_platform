@@ -68,15 +68,29 @@ public:
 			char c2 = level[static_cast<int>(floor(new_player_y + 0.99f) * level_width + floor(new_player_x + 0.01f))];
 			char c3 = level[static_cast<int>(floor(new_player_y + 0.99f) * level_width + floor(new_player_x + 0.99f))];
 
-			if (c0 == '.' && c1 == '.' && c2 == '.' && c3 == '.')
+			if (player_vx < 0.0f && (c0 != '.' || c2 != '.'))
 			{
-				player_x = new_player_x;
-				player_y = new_player_y;
+				player_vx = 0.0f;
 			}
-			else
+
+			if (player_vx > 0.0f && (c1 != '.' || c3 != '.'))
+			{
+				player_vx = 0.0f;
+			}
+
+			if (player_vy < 0.0f && (c0 != '.' || c1 != '.'))
 			{
 				player_vy = 0.0f;
 			}
+
+			if (player_vy > 0.0f && (c2 != '.' || c3 != '.'))
+			{
+				player_vy = 0.0f;
+			}
+
+			// Update player and camera
+			player_x += player_vx * elapsed_time;
+			player_y += player_vy * elapsed_time;
 
 			camera_x = player_x;
 			camera_y = player_y;
