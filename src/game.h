@@ -44,21 +44,25 @@ public:
 			
 			if (GetKey(Keys::LEFT).bHeld)
 			{
-				player_vx = -10.0f;
+				player_vx -= 1.0f;
 			}
 			else if (GetKey(Keys::RIGHT).bHeld)
 			{
-				player_vx = 10.0f;
+				player_vx += 1.0f;
 			}
 			else
 			{
 				player_vx = 0.0f;
 			}
 
-			if (GetKey(Keys::UP).bPressed && player_vy == 0.0f)
+			if (GetKey(Keys::UP).bHeld && on_ground)
 			{
-				player_vy = -10.0f;
+				player_vy -= 10.0f;
+				on_ground = false;
 			}
+
+			// Apply gravity to player's vertical velocity
+			player_vy += 20.0f * elapsed_time;
 
 			// Check for collisions
 			float new_player_x = player_x + player_vx * elapsed_time;
@@ -66,8 +70,8 @@ public:
 
 			// Moving Left
 			if (player_vx < 0.0f &&
-				((GetTile(new_player_x + 0.01f, new_player_y + 0.01f) != '.') ||
-				 (GetTile(new_player_x + 0.01f, new_player_y + 0.99f) != '.')))
+				((GetTile(new_player_x + 0.01f, new_player_y + 0.1f) != '.') ||
+				 (GetTile(new_player_x + 0.01f, new_player_y + 0.9f) != '.')))
 			{
 				new_player_x = player_x;
 				player_vx = 0.0f;
@@ -75,8 +79,8 @@ public:
 
 			// Moving Right
 			if (player_vx > 0.0f &&
-				((GetTile(new_player_x + 0.99f, new_player_y + 0.01f) != '.') ||
-				 (GetTile(new_player_x + 0.99f, new_player_y + 0.99f) != '.')))
+				((GetTile(new_player_x + 0.99f, new_player_y + 0.1f) != '.') ||
+				 (GetTile(new_player_x + 0.99f, new_player_y + 0.9f) != '.')))
 			{
 				new_player_x = player_x;
 				player_vx = 0.0f;
@@ -84,8 +88,8 @@ public:
 
 			// Moving Up
 			if (player_vy < 0.0f &&
-				((GetTile(new_player_x + 0.01f, new_player_y + 0.01f) != '.') ||
-				 (GetTile(new_player_x + 0.99f, new_player_y + 0.01f) != '.')))
+				((GetTile(new_player_x + 0.1f, new_player_y + 0.01f) != '.') ||
+				 (GetTile(new_player_x + 0.9f, new_player_y + 0.01f) != '.')))
 			{
 				new_player_y = player_y;
 				player_vy = 0.0f;
@@ -93,12 +97,23 @@ public:
 
 			// Moving Down
 			if (player_vy > 0.0f &&
-				((GetTile(new_player_x + 0.01f, new_player_y + 0.99f) != '.') ||
-				 (GetTile(new_player_x + 0.99f, new_player_y + 0.99f) != '.')))
+				((GetTile(new_player_x + 0.1f, new_player_y + 0.99f) != '.') ||
+				 (GetTile(new_player_x + 0.9f, new_player_y + 0.99f) != '.')))
 			{
 				new_player_y = player_y;
 				player_vy = 0.0f;
+				on_ground = true;
 			}
+
+			// Clamp velocities
+			if (player_vx < -10.0f)
+				player_vx = -10.0f;
+			if (player_vx > 10.0f)
+				player_vx = 10.0f;
+			if (player_vy < -50.0f)
+				player_vy = -50.0f;
+			if (player_vy > 50.0f)
+				player_vy = 50.0f;
 
 			// Update player and camera
 			player_x = new_player_x;
@@ -146,14 +161,6 @@ public:
 			// Draw player
 			player->Draw((player_x - origin_x) * mag * tile, (player_y - origin_y) * mag * tile, mag);
 
-			// Apply gravity to player's vertical velocity
-			char c0 = GetTile(player_y + 1.01f, player_x + 0.01f);
-			char c1 = GetTile(player_y + 1.01f, player_x + 0.99f);
-			if (player_vy != 0.0f || (c0 == '.' && c1 == '.'))
-			{
-				player_vy += 20.0f * elapsed_time;
-			}
-
 			return true;
 		}
 
@@ -187,6 +194,8 @@ private:
 	const float level_height = 16.0;
 	const float mag = 4.0;
 	const float tile = 16.0;
+
+	bool on_ground = false;
 };
 
 #endif
