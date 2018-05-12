@@ -22,10 +22,10 @@ public:
 			level += "#..............................................................................#";
 			level += "#..............................................................................#";
 			level += "#..............................................................................#";
-			level += "#..........####................................................................#";
-			level += "#..............................................................................#";
-			level += "#......####....####............................................................#";
-			level += "#..............................................................................#";
+			level += "#..........####............####....####............####........................#";
+			level += "#......................####....####....####....####....####..................###";
+			level += "#......####....####........................####............####..........##....#";
+			level += "#..............................................................####..##........#";
 			level += "#..####....####....####........................................................#";
 			level += "#..............................................................................#";
 			level += "################################################################################";
@@ -44,25 +44,41 @@ public:
 			
 			if (GetKey(Keys::LEFT).bHeld)
 			{
-				player_vx -= 1.0f;
+				if (on_ground)
+					player_vx -= 1.0f;
+				else
+					player_vx -= 0.25f;
 			}
 			else if (GetKey(Keys::RIGHT).bHeld)
 			{
-				player_vx += 1.0f;
+				if (on_ground)
+					player_vx += 1.0f;
+				else
+					player_vx += 0.25f;
 			}
 			else
 			{
 				player_vx = 0.0f;
 			}
 
-			if (GetKey(Keys::UP).bHeld && on_ground)
+			if (GetKey(Keys::SPACE).bHeld && on_ground)
 			{
-				player_vy -= 10.0f;
+				player_vy -= 20.0f;
 				on_ground = false;
 			}
 
 			// Apply gravity to player's vertical velocity
-			player_vy += 20.0f * elapsed_time;
+			player_vy += 60.0f * elapsed_time;
+
+			// Clamp velocities
+			if (player_vx < -10.0f)
+				player_vx = -10.0f;
+			if (player_vx > 10.0f)
+				player_vx = 10.0f;
+			if (player_vy < -100.0f)
+				player_vy = -100.0f;
+			if (player_vy > 100.0f)
+				player_vy = 100.0f;
 
 			// Check for collisions
 			float new_player_x = player_x + player_vx * elapsed_time;
@@ -104,16 +120,6 @@ public:
 				player_vy = 0.0f;
 				on_ground = true;
 			}
-
-			// Clamp velocities
-			if (player_vx < -10.0f)
-				player_vx = -10.0f;
-			if (player_vx > 10.0f)
-				player_vx = 10.0f;
-			if (player_vy < -50.0f)
-				player_vy = -50.0f;
-			if (player_vy > 50.0f)
-				player_vy = 50.0f;
 
 			// Update player and camera
 			player_x = new_player_x;
