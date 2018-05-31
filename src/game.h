@@ -56,10 +56,6 @@ public:
 				else
 					player_vx += 0.25f;
 			}
-			/* else */
-			/* { */
-			/* 	player_vx = 0.0f; */
-			/* } */
 
 			if (GetKey(Keys::SPACE).bHeld && on_ground)
 			{

@@ -348,7 +348,10 @@ public:
 			throw SDLException("Failed to load bitmap");
 		}
 
-		/* SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB( */
+		if (SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 255, 0, 255)))
+		{
+			throw SDLException("Failed to set color key of sprite");
+		}
 
 		texture = SDL_CreateTextureFromSurface(renderer, surface);
 		if (!texture)
