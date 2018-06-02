@@ -44,6 +44,7 @@ public:
 			
 			if (GetKey(Keys::LEFT).bHeld)
 			{
+				face_right = false;
 				if (on_ground)
 					player_vx -= 1.0f;
 				else
@@ -51,6 +52,7 @@ public:
 			}
 			else if (GetKey(Keys::RIGHT).bHeld)
 			{
+				face_right = true;
 				if (on_ground)
 					player_vx += 1.0f;
 				else
@@ -169,7 +171,8 @@ public:
 			}
 
 			// Draw player
-			player->Draw((player_x - origin_x) * mag * tile, (player_y - origin_y) * mag * tile, mag);
+			SDL_RendererFlip flip = (face_right ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+			player->Draw((player_x - origin_x) * mag * tile, (player_y - origin_y) * mag * tile, mag, flip);
 
 			return true;
 		}
@@ -206,6 +209,7 @@ private:
 	const float tile = 16.0;
 
 	bool on_ground = false;
+	bool face_right = false;
 };
 
 #endif

@@ -371,16 +371,16 @@ public:
 	int Width() const { return width; }
 	int Height() const { return height; }
 
-	void Draw(int x, int y)
+	void Draw(int x, int y, SDL_RendererFlip flip = SDL_FLIP_NONE)
 	{
 		SDL_Rect dstrect = { x, y, width, height };
-		SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+		SDL_RenderCopyEx(renderer, texture, NULL, &dstrect, 0.0, NULL, flip);
 	}
 
-	void Draw(int x, int y, int mag)
+	void Draw(int x, int y, int mag, SDL_RendererFlip flip = SDL_FLIP_NONE)
 	{
 		SDL_Rect dstrect = { x, y, width*mag, height*mag };
-		SDL_RenderCopy(renderer, texture, NULL, &dstrect);
+		SDL_RenderCopyEx(renderer, texture, NULL, &dstrect, 0.0, NULL, flip);
 	}
 
 private:
